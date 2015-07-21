@@ -10,12 +10,16 @@ public enum LanguageEntries {
     INSUFFICIENT_PERMISSION("&cI asked a fairy if you could do that, the fairy got mad."),
     TARGET_NOT_FOUND("&cTarget either doesn't exist or isn't online!"),
     MATERIAL_NOT_FOUND("&cItem not found!"),
+    EMPTY_HAND("&cNothing in hand!"),
     INVALID_INTEGER("&cThe number you provided is not valid!"),
     INVALID_STACK_SIZE("&cThe stack size must be at least 1, but no larger than {0}."),
 
     GIVE_COMMAND_GIVEN("&aYou were given &f{0}&a x&f{1}&a!"),
     GIVE_COMMAND_GIVEN_FROM("&aYou were given &f{0}&a x&f{1}&a by &f{2}&a!"),
     GIVE_COMMAND_GIVEN_TO("&aYou gave &f{0}&a x&f{1}&a to &f{2}&a!"),
+
+    MORE_COMMAND_ALL("&aYour inventory has been maxed out!"),
+    MORE_COMMAND_HAND("&aThere you go!"),
 
     LANGUAGE_ENTRIES_LOADED("Successfully loaded {0} language entries!"),
     LANGUAGE_ENTRIES_UPDATED("Successfully updated {0} language entries!");

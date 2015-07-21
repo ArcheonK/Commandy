@@ -8,3 +8,7 @@ commands:
     usage: /item
     description: Give yourself (or someone else) an item
     aliases: [i, give]
+  more:
+    usage: /more
+    description: Give more of an item
+    alises: [more, stack]

@@ -1,6 +1,7 @@
 package com.turqmelon.Commandy;
 
 import com.turqmelon.Commandy.Commands.Cheat.ItemCommand;
+import com.turqmelon.Commandy.Commands.Cheat.MoreCommand;
 import com.turqmelon.Commandy.Exception.CommandyLanguageException;
 import com.turqmelon.Commandy.Util.CommandyLogger;
 import com.turqmelon.Commandy.Util.LanguageManager;
@@ -54,6 +55,12 @@ public class Commandy extends JavaPlugin {
             e.sendToLogger();
         }
 
+        registerCommands();
+
+
+    }
+
+    private void registerCommands() {
         {
             ItemCommand cmd = new ItemCommand(this, "Give yourself, or someone else, an item", "commandy.give", 0, "/give [Player] <Item> [Amount] [Data]", false);
             PluginCommand c = getCommand("item");
@@ -61,8 +68,13 @@ public class Commandy extends JavaPlugin {
             c.setDescription(cmd.getDescription());
             c.setAliases(Arrays.asList("i", "give"));
         }
-
-
+        {
+            MoreCommand cmd = new MoreCommand(this, "Give more of an item", "commandy.more", 0, "/more [All]", true);
+            PluginCommand c = getCommand("more");
+            c.setExecutor(cmd);
+            c.setDescription(cmd.getDescription());
+            c.setAliases(Arrays.asList("stack"));
+        }
     }
 
     public LanguageManager getLanguageManager() {
