@@ -18,6 +18,9 @@ public enum LanguageEntries {
     GIVE_COMMAND_GIVEN_FROM("&aYou were given &f{0}&a x&f{1}&a by &f{2}&a!"),
     GIVE_COMMAND_GIVEN_TO("&aYou gave &f{0}&a x&f{1}&a to &f{2}&a!"),
 
+    WHO_COMMAND_HEADER("&eThere are &f{0}&e out of &f{1}&e players online."),
+    WHO_COMMAND_LIST("&ePlayers:&f {0}"),
+
     MORE_COMMAND_ALL("&aYour inventory has been maxed out!"),
     MORE_COMMAND_HAND("&aThere you go!"),
 

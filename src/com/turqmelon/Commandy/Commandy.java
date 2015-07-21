@@ -2,6 +2,7 @@ package com.turqmelon.Commandy;
 
 import com.turqmelon.Commandy.Commands.Cheat.ItemCommand;
 import com.turqmelon.Commandy.Commands.Cheat.MoreCommand;
+import com.turqmelon.Commandy.Commands.Utility.WhoCommand;
 import com.turqmelon.Commandy.Exception.CommandyLanguageException;
 import com.turqmelon.Commandy.Util.CommandyLogger;
 import com.turqmelon.Commandy.Util.LanguageManager;
@@ -74,6 +75,13 @@ public class Commandy extends JavaPlugin {
             c.setExecutor(cmd);
             c.setDescription(cmd.getDescription());
             c.setAliases(Arrays.asList("stack"));
+        }
+        {
+            WhoCommand cmd = new WhoCommand(this, "Show online players", "commandy.who", 0, "/who", false);
+            PluginCommand c = getCommand("who");
+            c.setExecutor(cmd);
+            c.setDescription(cmd.getDescription());
+            c.setAliases(Arrays.asList("list", "playerlist", "players", "online"));
         }
     }
 

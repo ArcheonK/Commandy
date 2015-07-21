@@ -12,3 +12,6 @@ commands:
     usage: /more
     description: Give more of an item
     alises: [more, stack]
+  who:
+    usage: /who
+    aliases: [who, list, online, players, playerlist]
