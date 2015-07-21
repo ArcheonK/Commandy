@@ -29,12 +29,16 @@ public class ItemCommand extends CommandyCommand {
             target=(Player)sender;
         }
 
-        if (target==null){
+        if (target==null&&(!(sender instanceof Player))){
             sender.sendMessage(getPlugin().getLanguageManager().getElement(LanguageEntries.TARGET_NOT_FOUND.getKey()).getConvertedColorText());
             return;
         }
 
-        if (!target.getName().equals(sender.getName())&&!sender.hasPermission("commandy.give.other")){
+        if (target==null){
+            target=(Player)sender;
+        }
+
+        if (!target.getName().equals(sender.getName()) && !sender.hasPermission("commandy.give.other")){
             sender.sendMessage(getPlugin().getLanguageManager().getElement(LanguageEntries.INSUFFICIENT_PERMISSION.getKey()).getConvertedColorText());
             return;
         }
@@ -42,7 +46,7 @@ public class ItemCommand extends CommandyCommand {
         Material material = Material.AIR;
         String materialInput = null;
 
-        if (target.getName().equals(sender.getName())&&args.length>0){
+        if (target.getName().equals(sender.getName()) && args.length > 0){
             materialInput=args[0];
         }
         else if (args.length>1){
@@ -52,15 +56,15 @@ public class ItemCommand extends CommandyCommand {
         boolean notfound = false;
 
         if (materialInput==null){
-            notfound=true;
+            sender.sendMessage(getPlugin().getLanguageManager().getElement("command_insufficient_args").getConvertedColorText());
+            sender.sendMessage(getPlugin().getLanguageManager().getElement("command_usage_example").getConvertedColorText().replace("{0}", getUsage()));
+            return;
         }
 
-        if (!notfound){
-            try {
-                material=Material.getMaterial(materialInput.toUpperCase());
-            }catch (Exception ex){
-                notfound=true;
-            }
+        try {
+            material=Material.getMaterial(materialInput.toUpperCase());
+        }catch (Exception ex){
+            notfound=true;
         }
 
         if (notfound){
@@ -71,7 +75,7 @@ public class ItemCommand extends CommandyCommand {
         int amount = 1;
         String amountInput = null;
 
-        if (target.getName().equals(sender.getName())&&args.length>1){
+        if (target.getName().equals(sender.getName()) && args.length > 1){
             amountInput=args[1];
         }
         else if (args.length>2){
@@ -95,7 +99,7 @@ public class ItemCommand extends CommandyCommand {
         byte data = 0;
         String dataInput = null;
 
-        if (target.getName().equals(sender.getName())&&args.length>2){
+        if (target.getName().equals(sender.getName()) && args.length > 2){
             dataInput=args[2];
         }
         else if (args.length>3){
@@ -117,18 +121,15 @@ public class ItemCommand extends CommandyCommand {
 
         if (target.getName().equals(sender.getName())){
             sender.sendMessage(getPlugin().getLanguageManager().getElement(LanguageEntries.GIVE_COMMAND_GIVEN.getKey()).getConvertedColorText()
-                    .replace("{0}", material.name().toLowerCase().replace("_", " ")
-                            .replace("{1}", amount+"")));
+                    .replace("{0}", material.name().toLowerCase().replace("_", " ")).replace("{1}", amount + ""));
         }
         else{
             sender.sendMessage(getPlugin().getLanguageManager().getElement(LanguageEntries.GIVE_COMMAND_GIVEN_TO.getKey()).getConvertedColorText()
-                    .replace("{0}", material.name().toLowerCase().replace("_", " ")
-                            .replace("{1}", amount+"")
-                                .replace("{2}", target.getName())));
+                    .replace("{0}", material.name().toLowerCase().replace("_", " ")).replace("{1}", amount + "")
+                    .replace("{2}", target.getName()));
             target.sendMessage(getPlugin().getLanguageManager().getElement(LanguageEntries.GIVE_COMMAND_GIVEN_FROM.getKey()).getConvertedColorText()
-                    .replace("{0}", material.name().toLowerCase().replace("_", " ")
-                            .replace("{1}", amount+"")
-                            .replace("{2}", sender.getName())));
+                    .replace("{0}", material.name().toLowerCase().replace("_", " ")).replace("{1}", amount+"")
+                    .replace("{2}", sender.getName()));
         }
 
 
