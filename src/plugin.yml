@@ -1,0 +1,10 @@
+name: Commandy
+author: Turqmelon
+version: 1.0
+main: com.turqmelon.Commandy.Commandy
+description: General commands and server utilities.
+commands:
+  item:
+    usage: /item
+    description: Give yourself (or someone else) an item
+    aliases: [i, give]

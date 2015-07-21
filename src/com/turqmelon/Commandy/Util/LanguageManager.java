@@ -34,7 +34,7 @@ public class LanguageManager {
 
         int updated = 0;
 
-        for(DefaultLanguageEntries entries : DefaultLanguageEntries.values()){
+        for(LanguageEntries entries : LanguageEntries.values()){
             if (getElement(entries.name()).getKey().equals(getDefaultElement().getKey())){
                 getElementList().add(new LanguageElement(entries.name().toLowerCase(), entries.getMessage()));
                 getLanguageFile().set(entries.name().toLowerCase(), entries.getMessage());
@@ -61,11 +61,11 @@ public class LanguageManager {
         }
         ConfigurationSection section = getLanguageFile().getConfigurationSection("");
         if (section==null){
-            throw new CommandyLanguageException(getPlugin(), 2, "Failed to load entries: No language entries in lang.yml.");
+            return;
         }
         Set<String> entries = section.getKeys(false);
         if (entries.size()==0){
-            throw new CommandyLanguageException(getPlugin(), 2, "Failed to load entries: No language entries in lang.yml.");
+            return;
         }
         for(String key : entries){
             String msg = getLanguageFile().getString(key);

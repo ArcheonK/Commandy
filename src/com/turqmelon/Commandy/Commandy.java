@@ -1,13 +1,16 @@
 package com.turqmelon.Commandy;
 
+import com.turqmelon.Commandy.Commands.Cheat.ItemCommand;
 import com.turqmelon.Commandy.Exception.CommandyLanguageException;
 import com.turqmelon.Commandy.Util.CommandyLogger;
 import com.turqmelon.Commandy.Util.LanguageManager;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class Commandy extends JavaPlugin {
@@ -17,6 +20,11 @@ public class Commandy extends JavaPlugin {
 
     @Override
     public void onEnable(){
+
+        if (!(new File(getDataFolder(), "config.yml")).exists()){
+            saveDefaultConfig();
+        }
+
         this.logger = new CommandyLogger(this); // Initialize the CommandyLogger
         this.languageManager = new LanguageManager(this); // Initialize our Language Manager
 
@@ -44,6 +52,14 @@ public class Commandy extends JavaPlugin {
             getCommandyLogger().log(Level.SEVERE, "Failed to load lang.yml! (" + e.getMessage() + ")");
         } catch (CommandyLanguageException e) {
             e.sendToLogger();
+        }
+
+        {
+            ItemCommand cmd = new ItemCommand(this, "Give yourself, or someone else, an item", "commandy.give", 0, "/give [Player] <Item> [Amount] [Data]", false);
+            PluginCommand c = getCommand("item");
+            c.setExecutor(cmd);
+            c.setDescription(cmd.getDescription());
+            c.setAliases(Arrays.asList("i", "give"));
         }
 
 
