@@ -15,3 +15,7 @@ commands:
   who:
     usage: /who
     aliases: [who, list, online, players, playerlist]
+  motd:
+    usage: /motd
+  rules:
+    usage: /rules
