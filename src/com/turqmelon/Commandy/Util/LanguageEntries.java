@@ -18,6 +18,12 @@ public enum LanguageEntries {
     GIVE_COMMAND_GIVEN_FROM("&aYou were given &f{0}&a x&f{1}&a by &f{2}&a!"),
     GIVE_COMMAND_GIVEN_TO("&aYou gave &f{0}&a x&f{1}&a to &f{2}&a!"),
 
+    KIT_COMMAND_NOT_FOUND("&cKit not found!"),
+    KIT_COMMAND_LIST("&eYour Kits:&f {0}"),
+    KIT_COMMAND_COOLDOWN("&cYou can't use that kit again for a little while!"),
+    KIT_COMMAND_GIVEN("&aGiven kit &f{0}&a!"),
+    KIT_COMMAND_NOACCESS("&cYou don't have access to that kit!"),
+
     WHO_COMMAND_HEADER("&eThere are &f{0}&e out of &f{1}&e players online."),
     WHO_COMMAND_LIST("&ePlayers:&f {0}"),
 

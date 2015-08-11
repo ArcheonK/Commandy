@@ -19,3 +19,5 @@ commands:
     usage: /motd
   rules:
     usage: /rules
+  kit:
+    usage: /kit

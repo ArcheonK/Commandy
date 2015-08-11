@@ -2,25 +2,29 @@ package com.turqmelon.Commandy;
 
 import com.turqmelon.Commandy.Commands.Cheat.ItemCommand;
 import com.turqmelon.Commandy.Commands.Cheat.MoreCommand;
+import com.turqmelon.Commandy.Commands.Utility.KitCommand;
 import com.turqmelon.Commandy.Commands.Utility.MotdCommand;
 import com.turqmelon.Commandy.Commands.Utility.RulesCommand;
 import com.turqmelon.Commandy.Commands.Utility.WhoCommand;
 import com.turqmelon.Commandy.Exception.CommandyLanguageException;
 import com.turqmelon.Commandy.Listeners.Connection.PlayerJoin;
 import com.turqmelon.Commandy.Util.CommandyLogger;
+import com.turqmelon.Commandy.Util.Kit;
 import com.turqmelon.Commandy.Util.LanguageManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 public class Commandy extends JavaPlugin {
@@ -29,6 +33,7 @@ public class Commandy extends JavaPlugin {
     private CommandyLogger logger;
     private List<String> motd = new ArrayList<>();
     private List<String> rules = new ArrayList<>();
+    private List<Kit> kits = new ArrayList<>();
 
     @Override
     public void onEnable(){
@@ -81,7 +86,13 @@ public class Commandy extends JavaPlugin {
             getCommandyLogger().log(Level.SEVERE, "Failed to load rules.txt! (" + e.getMessage() + ")");
         }
 
+        Kit.setPlugin(this);
 
+        try {
+            loadKits();
+        } catch (IOException | InvalidConfigurationException e) {
+            getCommandyLogger().log(Level.SEVERE, "Failed to load kits.yml! (" + e.getMessage() + ")");
+        }
 
 
     }
@@ -93,10 +104,10 @@ public class Commandy extends JavaPlugin {
             String newLine = System.getProperty("line.separator");
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(
-                    "&c&lOur Rules:"+newLine+
-                    "&61)&f Be Nice"+newLine+
-                    "&62)&f Be Respectful"+newLine+
-                    "&63)&f Use Common Sense");
+                    "&c&lOur Rules:" + newLine +
+                            "&61)&f Be Nice" + newLine +
+                            "&62)&f Be Respectful" + newLine +
+                            "&63)&f Use Common Sense");
             writer.close();
             getCommandyLogger().log(Level.INFO, "Generated default rules file!");
         }
@@ -111,6 +122,98 @@ public class Commandy extends JavaPlugin {
         }
 
         br.close();
+
+    }
+
+    private void loadKits() throws IOException, InvalidConfigurationException {
+        File file = new File(getDataFolder(), "kits.yml");
+        if (!file.exists()){
+            file.createNewFile();
+            YamlConfiguration config = new YamlConfiguration();
+            config.load(file);
+            List<String> items = new ArrayList<>();
+            items.add("wood_pickaxe");
+            items.add("wood_spade");
+            items.add("wood_axe");
+            items.add("wood_sword");
+            items.add("wood,64");
+            config.set("kits.Default.items", items);
+            config.set("kits.Default.delay", 300);
+            config.set("kits.Default.check-permission", false);
+            config.save(file);
+            getCommandyLogger().log(Level.INFO, "Generated default kits file!");
+        }
+        YamlConfiguration config = new YamlConfiguration();
+        config.load(file);
+
+        getCommandyLogger().log(Level.INFO, " === LOADING KITS === ");
+
+        ConfigurationSection section = config.getConfigurationSection("kits");
+        if (section!=null){
+            Set<String> names = section.getKeys(false);
+            for(String name : names){
+                getCommandyLogger().log(Level.INFO, "Loading kit " + name + "...");
+                List<String> items = config.getStringList("kits." + name + ".items");
+                int cooldown = config.getInt("kits." + name + ".delay");
+                getCommandyLogger().log(Level.INFO, "Cooldown: " + cooldown + "s");
+                boolean checkPermission = config.getBoolean("kits." + name + ".check-permission");
+                getCommandyLogger().log(Level.INFO, "Permission Check: " + checkPermission);
+                List<ItemStack> stacks = new ArrayList<>();
+                for(String item : items){
+                    int amount = 1;
+                    byte data = 0;
+                    String[] qtySplit = item.split(",");
+                    String material;
+                    if (qtySplit.length>1) {
+                        amount = Integer.parseInt(qtySplit[1]);
+                        String[] dSplit = qtySplit[0].split(":");
+                        if (dSplit.length>1){
+                            data=(byte)Integer.parseInt(dSplit[1]);
+                            material=dSplit[0];
+                        }
+                        else{
+                            material=qtySplit[0];
+                        }
+                    }
+                    else{
+                        String[] dSplit = item.split(":");
+                        if (dSplit.length>1){
+                            data=(byte)Integer.parseInt(dSplit[1]);
+                            material=dSplit[0];
+                        }
+                        else{
+                            material=item;
+                        }
+
+                    }
+
+                    try {
+                        Material type = Material.getMaterial(material.toUpperCase());
+                        stacks.add(new ItemStack(type, amount, data));
+                    }catch (Exception ex){
+                        getCommandyLogger().log(Level.SEVERE, "Failed to load \"" + item + "\" in kit \"" + name + "\"! Invalid syntax!");
+                    }
+                }
+                getCommandyLogger().log(Level.INFO, "Item Count: " + stacks.size());
+                Kit kit = new Kit(name, (cooldown*1000), checkPermission, stacks);
+
+                ConfigurationSection userSection = config.getConfigurationSection("kits." + name + ".users");
+                if (userSection!=null){
+                    Set<String> uuids = userSection.getKeys(false);
+                    for(String uuid : uuids){
+                        long lastUse = config.getLong("kits." + name + ".users." + uuid);
+                        kit.getLastUse().put(UUID.fromString(uuid), lastUse);
+                    }
+                }
+
+                getCommandyLogger().log(Level.INFO, "Loaded kit " + name + "!");
+                getKits().add(kit);
+
+            }
+        }
+
+        getCommandyLogger().log(Level.INFO, " === KITS LOADED === ");
+
 
     }
 
@@ -180,10 +283,16 @@ public class Commandy extends JavaPlugin {
         return motd;
     }
 
+    public List<Kit> getKits() {
+        return kits;
+    }
+
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerJoin(this), this);
     }
+
+
 
     private void registerCommands() {
         {
@@ -218,6 +327,12 @@ public class Commandy extends JavaPlugin {
             c.setExecutor(cmd);
             c.setDescription(cmd.getDescription());
             c.setAliases(Arrays.asList("list", "playerlist", "players", "online"));
+        }
+        {
+            KitCommand cmd = new KitCommand(this, "List kits or show them", "commandy.kit", 0, "/kit <Kit>", true);
+            PluginCommand c = getCommand("kit");
+            c.setExecutor(cmd);
+            c.setDescription(cmd.getDescription());
         }
     }
 
