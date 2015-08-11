@@ -8,9 +8,7 @@ import com.turqmelon.Commandy.Commands.Utility.RulesCommand;
 import com.turqmelon.Commandy.Commands.Utility.WhoCommand;
 import com.turqmelon.Commandy.Exception.CommandyLanguageException;
 import com.turqmelon.Commandy.Listeners.Connection.PlayerJoin;
-import com.turqmelon.Commandy.Util.CommandyLogger;
-import com.turqmelon.Commandy.Util.Kit;
-import com.turqmelon.Commandy.Util.LanguageManager;
+import com.turqmelon.Commandy.Util.*;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,6 +32,11 @@ public class Commandy extends JavaPlugin {
     private List<String> motd = new ArrayList<>();
     private List<String> rules = new ArrayList<>();
     private List<Kit> kits = new ArrayList<>();
+    private List<ItemAlias> aliases = new ArrayList<>();
+
+    public List<ItemAlias> getAliases() {
+        return aliases;
+    }
 
     @Override
     public void onEnable(){
@@ -94,6 +97,12 @@ public class Commandy extends JavaPlugin {
             getCommandyLogger().log(Level.SEVERE, "Failed to load kits.yml! (" + e.getMessage() + ")");
         }
 
+        try {
+            loadItemAliases();
+        } catch (IOException | InvalidConfigurationException e) {
+            getCommandyLogger().log(Level.SEVERE, "Failed to load itemaliases.yml! (" + e.getMessage() + ")");
+        }
+
 
     }
 
@@ -122,6 +131,63 @@ public class Commandy extends JavaPlugin {
         }
 
         br.close();
+
+    }
+
+    public ItemAlias getItemByAlias(String name){
+        for(ItemAlias alias : getAliases()){
+            if (alias.getAlias().equalsIgnoreCase(name)){
+                return alias;
+            }
+        }
+        return null;
+    }
+
+    private void loadItemAliases() throws IOException, InvalidConfigurationException {
+        File file = new File(getDataFolder(), "itemaliases.yml");
+        if (!file.exists()){
+            file.createNewFile();
+            YamlConfiguration config = new YamlConfiguration();
+            config.load(file);
+            List<String> example = new ArrayList<>();
+            example.add("blue");
+            example.add("bluewool");
+            config.set("wool,11", example);
+            config.save(file);
+            getCommandyLogger().log(Level.INFO, "Generated default item aliases file!");
+        }
+        YamlConfiguration config = new YamlConfiguration();
+        config.load(file);
+
+        ConfigurationSection section = config.getConfigurationSection("");
+        if (section!=null){
+            Set<String> keys = section.getKeys(false);
+            for(String key : keys){
+                String[] k = key.split(",");
+                try {
+
+                    if (k.length<=1){
+                        throw new Exception();
+                    }
+
+                    Material material = Material.valueOf(k[0].toUpperCase());
+                    int data = Integer.parseInt(k[1]);
+
+                    List<String> aliases = config.getStringList(key);
+                    for(String alias : aliases){
+                        if (getItemByAlias(alias)==null){
+                            getAliases().add(new ItemAlias(alias, material, (byte) data));
+                        }
+                    }
+
+                }catch (Exception ex){
+                    getCommandyLogger().log(Level.SEVERE, "Skipped " + key + " due to nonexistant item.");
+                }
+            }
+        }
+
+        getCommandyLogger().log(Level.INFO, getLanguageManager().getElement(LanguageEntries.ITEM_ALIASES_LOADED.getKey()).getConvertedColorText()
+                .replace("{0}", getAliases().size()+""));
 
     }
 

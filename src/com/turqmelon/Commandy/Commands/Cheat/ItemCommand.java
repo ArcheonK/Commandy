@@ -3,6 +3,7 @@ package com.turqmelon.Commandy.Commands.Cheat;
 
 import com.turqmelon.Commandy.Commands.CommandyCommand;
 import com.turqmelon.Commandy.Commandy;
+import com.turqmelon.Commandy.Util.ItemAlias;
 import com.turqmelon.Commandy.Util.LanguageEntries;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -67,8 +68,18 @@ public class ItemCommand extends CommandyCommand {
             notfound=true;
         }
 
-        if (notfound){
+        ItemAlias alias = getPlugin().getItemByAlias(materialInput);
+
+        if (alias!=null){
+            material=alias.getType();
+            notfound=false;
+        }
+
+        if (notfound||material==null){
             sender.sendMessage(getPlugin().getLanguageManager().getElement(LanguageEntries.MATERIAL_NOT_FOUND.getKey()).getConvertedColorText());
+            if (sender.isOp()){
+                sender.sendMessage(getPlugin().getLanguageManager().getElement(LanguageEntries.GIVE_COMMAND_ALIAS_TIP.getKey()).getConvertedColorText());
+            }
             return;
         }
 
@@ -96,7 +107,7 @@ public class ItemCommand extends CommandyCommand {
             return;
         }
 
-        byte data = 0;
+        byte data = alias!=null?alias.getData():0;
         String dataInput = null;
 
         if (target.getName().equals(sender.getName()) && args.length > 2){

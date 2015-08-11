@@ -17,6 +17,7 @@ public enum LanguageEntries {
     GIVE_COMMAND_GIVEN("&aYou were given &f{0}&a x&f{1}&a!"),
     GIVE_COMMAND_GIVEN_FROM("&aYou were given &f{0}&a x&f{1}&a by &f{2}&a!"),
     GIVE_COMMAND_GIVEN_TO("&aYou gave &f{0}&a x&f{1}&a to &f{2}&a!"),
+    GIVE_COMMAND_ALIAS_TIP("&7&oTIP: Setup aliases to common items in itemaliases.yml!"),
 
     KIT_COMMAND_NOT_FOUND("&cKit not found!"),
     KIT_COMMAND_LIST("&eYour Kits:&f {0}"),
@@ -30,6 +31,7 @@ public enum LanguageEntries {
     MORE_COMMAND_ALL("&aYour inventory has been maxed out!"),
     MORE_COMMAND_HAND("&aThere you go!"),
 
+    ITEM_ALIASES_LOADED("Successfully loaded {0} item aliases!"),
     LANGUAGE_ENTRIES_LOADED("Successfully loaded {0} language entries!"),
     LANGUAGE_ENTRIES_UPDATED("Successfully updated {0} language entries!");
 
